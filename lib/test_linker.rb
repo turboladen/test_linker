@@ -117,14 +117,16 @@ class TestLinker
     TestLinker.log "API Version: #{method_supported_in_version}"
     TestLinker.log "Calling method: '#{method_name}' with args '#{arguments}'"
     parsed_response = @server.call(method_name, arguments)
-    TestLinker.log "Received response:"
-    parsed_response.params.each { |p| TestLinker.log p}
     the_data = parsed_response.params.first
+    TestLinker.log "Received response:"
+    #parsed_response.params.each { |p| TestLinker.log p}
+    TestLinker.log the_data
 
     if @version.nil?
       return the_data
-    #elsif response.is_a?(Array) && response.first['code']
-    #  raise TestLinker::Error, "#{response.first['code']}: #{response.first['message']}"
+    elsif the_data.is_a?(Array) && the_data.first[:code]
+      message = "#{self.class} Error #{the_data.first[:code]}: #{the_data.first[:message]}"
+      raise TestLinker::Error, message
     end
 
     the_data

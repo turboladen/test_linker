@@ -635,8 +635,8 @@ class TestLinker
       args.merge! options
       result = @server.call("tl.reportTCResult", args).first
 
-      unless result['message'] == 'Success!'
-        raise TestLinker::Error, "#{result['code']}: #{result['message']}"
+      unless result[:message] == 'Success!'
+        raise TestLinker::Error, "#{result[:code]}: #{result[:message]}"
       end
 
       result
@@ -676,8 +676,8 @@ class TestLinker
       args.merge! options
       result = @server.call("tl.setTestCaseExecutionResult", args).first
 
-      unless result['message'] == 'Success!'
-        raise TestLinker::Error, "#{result['code']}: #{result['message']}"
+      unless result[:message] == 'Success!'
+        raise TestLinker::Error, "#{result[:code]}: #{result[:message]}"
       end
 
       result

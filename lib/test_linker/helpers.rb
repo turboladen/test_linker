@@ -7,8 +7,8 @@ module TestLinker::Helpers
   # @return [String] The version of TestLink's API.
   # @raise [TestLinker::Error] If version couldn't be extracted.
   def api_version
-    if @api_version
-      @api_version
+    if @version
+      @version
     else
       about_message = about
       about_message =~ /Testlink API Version: (.+) initially/
@@ -29,13 +29,13 @@ module TestLinker::Helpers
   #   project_name.
   def test_project_id project_name
     if @version < "1.0"
-      project = projects.find { |project| project["name"] == project_name }
+      project = projects.find { |project| project[:name] == project_name }
     else
       project = test_project_by_name(project_name).first
-      raise TestLinker::Error, project['message'] if project['code']
+      raise TestLinker::Error, project[:message] if project[:code]
     end
 
-    project.nil? ? nil : project['id'].to_i
+    project.nil? ? nil : project[:id].to_i
   end
 
   # Gets info about test plans within a project
@@ -51,14 +51,14 @@ module TestLinker::Helpers
       test_plans = project_test_plans(project_id)
 
       test_plan = test_plans.first.values.find do |project_test_plan|
-        project_test_plan["name"] == plan_name
+        project_test_plan[:name] == plan_name
       end
     else
       test_plan = test_plan_by_name(project_name, plan_name).first
-      raise TestLinker::Error, test_plan['message'] if test_plan['code']
+      raise TestLinker::Error, test_plan[:message] if test_plan[:code]
     end
 
-    test_plan.nil? ? nil : test_plan['id'].to_i
+    test_plan.nil? ? nil : test_plan[:id].to_i
   end
 
   # Gets the ID for the given build name.
@@ -74,8 +74,8 @@ module TestLinker::Helpers
     builds = builds_for_test_plan plan_id
 
     builds.each do |build|
-      if build['name'] == build_name
-        return build['id'].to_i
+      if build[:name] == build_name
+        return build[:id].to_i
       end
     end
 
@@ -91,7 +91,7 @@ module TestLinker::Helpers
     test_plan_list = project_test_plans(project_id).first
 
     test_plan_list.each_value do |test_plan_info|
-      if test_plan_info["name"] =~ regex
+      if test_plan_info[:name] =~ regex
         list << test_plan_info
       end
     end
@@ -107,8 +107,8 @@ module TestLinker::Helpers
     test_suites = first_level_test_suites_for_test_project(test_project_id(project_name))
 
     test_suites.each do |test_suite|
-      if test_suite['name'] == suite_name
-        return test_suite['id'].to_i
+      if test_suite[:name] == suite_name
+        return test_suite[:id].to_i
       end
     end
 
@@ -129,7 +129,7 @@ module TestLinker::Helpers
     test_cases = test_cases_for_test_plan(test_plan_id)
 
     test_cases.each_value do |test_case_info|
-      if test_case_info['name'] == test_case_name
+      if test_case_info[:name] == test_case_name
         return test_case_info
       end
     end
@@ -156,7 +156,7 @@ module TestLinker::Helpers
     end
 
     test_suites.each do |suite|
-      if suite["name"].include? suite_name
+      if suite[:name].include? suite_name
         return suite
       end
     end
@@ -177,7 +177,7 @@ module TestLinker::Helpers
     # Create suite if it doesn't exist.
     project_id = test_project_id(project_name)
 
-    create_test_suite(project_id, suite_name).first['id']
+    create_test_suite(project_id, suite_name).first[:id]
   end
 
   # Get the ID of a suite with the given parent, creating it if it does not
@@ -193,16 +193,16 @@ module TestLinker::Helpers
     response = test_suites_for_test_suite(parent_id)
 
     if response.class == Array
-      raise TestLinker::Error, response.first['message']
+      raise TestLinker::Error, response.first[:message]
     elsif response.class == Hash
-      return response['id'] if response['name'] == suite_name
+      return response[:id] if response[:name] == suite_name
 
       response.each_value do |suite|
-        return suite['id'] if suite['name'] == suite_name
+        return suite[:id] if suite[:name] == suite_name
       end
     end
 
-    create_test_suite(project_id, suite_name, parent_id).first['id']
+    create_test_suite(project_id, suite_name, parent_id).first[:id]
   end
 
   # Creates test in test suite within a test plan within a project.
@@ -227,12 +227,12 @@ module TestLinker::Helpers
 
     if result.any?
       result.each do |result_ptr|
-        if result_ptr["message"].eql? "Success!"
+        if result_ptr[:message].eql? "Success!"
           if result_ptr.has_key? "additionalInfo"
             result_info = result_ptr.fetch("additionalInfo")
-            if result_info["msg"].eql? "ok"
-              test_case_id = result_info["id"]
-              test_case_version = result_info["version_number"]
+            if result_info[:msg].eql? "ok"
+              test_case_id = result_info[:id]
+              test_case_version = result_info[:version_number]
               return [test_case_id, test_case_version]
             else
               return -1
@@ -262,7 +262,7 @@ module TestLinker::Helpers
 
     if result.any?
       #Only way to tell if success if with the key "feature_id"
-      return result.has_key?("feature_id") ? true : false
+      return result.has_key?(:feature_id) ? true : false
     end
   end
 end
