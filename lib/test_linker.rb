@@ -119,7 +119,6 @@ class TestLinker
     parsed_response = @server.call(method_name, arguments)
     the_data = parsed_response.params.first
     TestLinker.log "Received response:"
-    #parsed_response.params.each { |p| TestLinker.log p}
     TestLinker.log the_data
 
     if @version.nil?
