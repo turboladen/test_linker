@@ -6,11 +6,9 @@
 
 == Description
 
-This is a Ruby wrapper around the TestLink XMLRPC API, thus allowing access to
-your TestLink test projects, plans, cases, and results using Ruby.  We've added
-a few helper methods as well to allow for getting at more of your data a little
-easier.  This supports TestLink APIs 1.0 Beta 5 (from TestLink 1.8.x) and 1.0
-(from TestLink 1.9.x).
+
+This project was (temporarily?) forked for usability purposes.
+All credit goes to the original author, Steve Loveless/turboladen
 
 == Features
 

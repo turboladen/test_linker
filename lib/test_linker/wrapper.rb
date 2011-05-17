@@ -663,9 +663,9 @@ class TestLinker
       args = { :testcaseid => test_case_id, :testplanid => plan_id,
           :status => status, :guess => true }
       args.merge! options
-      result = @server.call("tl.setTestCaseExecutionResult", args).first
+      result = make_call("tl.setTestCaseExecutionResult", args, "1.0").first
 
-      unless result['message'] == 'Success!'
+      unless result[:message] == 'Success!'
         raise TestLinker::Error, "#{result['code']}: #{result['message']}"
       end
 

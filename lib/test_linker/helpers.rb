@@ -89,9 +89,14 @@ module TestLinker::Helpers
   # @return [Array] An array of test plans that match the Regexp.
   def find_test_plans(project_id, regex, match_attribute=:name)
     test_plan_list = test_plans(project_id)
-
-    test_plan_list.first.values.find_all do |project_test_plan|
-      project_test_plan[match_attribute] =~ regex
+    if @version > "1.0"
+      test_plan_list.first.values.find_all do |project_test_plan|
+        project_test_plan[match_attribute] =~ regex
+      end
+    elsif @version <= "1.0"
+      test_plan_list.each do |plan|
+        return plan if plan[match_attribute] =~ regex
+      end
     end
   end
   
@@ -158,6 +163,57 @@ module TestLinker::Helpers
 
     create_test_suite(project_id, suite_name).first[:id]
   end
+
+  # Accepts testcase hash (AKA 'testcase info')'
+  # Todo:
+  # * versioning support (make_call = :exec_status vs 'exec_status')'
+  # * Also accept TC_ID instead?
+  def test_not_run?(testcase)
+    return true if testcase['exec_status'] == 'n'
+  end
+
+  # Returns all open (not-run) testcases for a given plan within project
+  # Extra options for now are ':build', which will match a given build rather than all open builds by default.
+  #
+  # @param [String] project_name
+  # @param [regexp] plan name as regex
+  # @param [hash] Options
+  # @return [String] Array of matching testcase hashes
+  def find_open_cases_for_plan(project_name,plan_regex,options={})
+    tc_arr = []
+    project_id = project_id(project_name)
+    # get plans for project
+    test_plans = find_test_plans(project_id, plan_regex)
+    # Get builds for plan(s)
+    builds = builds_for_test_plan(test_plans[:id])
+    builds.each do |build|
+      if options[:build] then
+        test_cases = test_cases_for_test_plan(build[:testplan_id],{ "buildid" => build[:id] }) if build[:name] =~ options[:build]
+      elsif build[:is_open] == 1
+        test_cases = test_cases_for_test_plan(build[:testplan_id],{ "buildid" => build[:id] })
+      end # if
+      unless test_cases.nil? then # cleaner than a nil-value err
+        test_cases.each_value do |test_case|
+          tc_arr = tc_arr.concat(test_case)  if test_not_run?(test_case.first) # There's only one element here, but it's in an array'
+        end   # each tc
+      end
+    end # each build
+    tc_arr
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # Get the ID of a suite with the given parent, creating it if it does not
   # exist.
