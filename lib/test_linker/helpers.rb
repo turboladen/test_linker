@@ -177,33 +177,40 @@ module TestLinker::Helpers
     true if test_case['exec_status'] == 'n'
   end
 
-  # Returns all open (not-run) testcases for a given plan within project
-  # Extra options for now are ':build', which will match a given build rather than all open builds by default.
+  # Returns all open (not-run) test cases for a given plan within project.
+  # Extra options for now are +:build+, which will match a given build rather
+  # than all open builds by default.
   #
   # @param [String] project_name
-  # @param [regexp] plan name as regex
-  # @param [hash] Options
-  # @return [String] Array of matching testcase hashes
+  # @param [Regexp] plan_regex Plan name as regex.
+  # @param [Hash] options
+  # @return [Array<Hash>] Array of matching testcase hashes.
   def find_open_cases_for_plan(project_name,plan_regex,options={})
-    tc_arr = []
+    test_case_array = []
     project_id = project_id(project_name)
-    # get plans for project
-    test_plans = find_test_plans(project_id, plan_regex)
-    # Get builds for plan(s)
-    builds = builds_for_test_plan(test_plans[:id])
+    test_plans = find_test_plans(project_id, plan_regex) # Get plans for project
+    builds = builds_for_test_plan(test_plans[:id])       # Get builds for plan(s)
+    
     builds.each do |build|
-      if options[:build] then
-        test_cases = test_cases_for_test_plan(build[:testplan_id],{ "buildid" => build[:id] }) if build[:name] =~ options[:build]
+      if options[:build]
+        if build[:name] =~ options[:build]
+          test_cases = test_cases_for_test_plan(build[:testplan_id],
+              { "buildid" => build[:id] }) 
+        end
       elsif build[:is_open] == 1
-        test_cases = test_cases_for_test_plan(build[:testplan_id],{ "buildid" => build[:id] })
-      end # if
-      unless test_cases.nil? then # cleaner than a nil-value err
-        test_cases.each_value do |test_case|
-          tc_arr = tc_arr.concat(test_case)  if test_not_run?(test_case.first) # There's only one element here, but it's in an array'
-        end   # each tc
+        test_cases = test_cases_for_test_plan(build[:testplan_id],
+            { "buildid" => build[:id] })
       end
-    end # each build
-    tc_arr
+
+      unless test_cases.nil?
+        test_cases.each_value do |test_case|
+          # There's only one element here, but it's in an array'
+          test_case_array = test_case_array.concat(test_case) if test_not_run?(test_case.first)
+        end
+      end
+    end
+ 
+    test_case_array
   end
 
 
