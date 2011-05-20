@@ -213,20 +213,6 @@ module TestLinker::Helpers
     test_case_array
   end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   # Get the ID of a suite with the given parent, creating it if it does not
   # exist.
   #
