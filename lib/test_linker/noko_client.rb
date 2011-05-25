@@ -36,6 +36,12 @@ class TestLinker
       end
       
       array.length == 1 ? array.first : array
+      if array.length == 1 && array.first.is_a?(String)
+        puts "yes"
+        array.first
+      else
+        array
+      end
     end
 
     def parse_type_to_ruby(m)

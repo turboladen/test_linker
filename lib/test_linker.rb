@@ -155,7 +155,7 @@ class TestLinker
 
     if @version.nil?
       return response
-    elsif response.is_a?(Array) && response.first[:code]
+    elsif response.is_a?(Array) && response.first.is_a?(Hash) && response.first[:code]
       raise TestLinker::Error, "#{response.first[:code]}: #{response.first[:message]}"
     end
     
