@@ -35,37 +35,38 @@ class TestLinker
         array << parse_type_to_ruby(value)
       end
       
-      if array.length == 1 && array.first.is_a?(String)
+      #if array.length == 1 && array.first.is_a?(String)
+      #  array.first
+      #else
+      #  array
         array.first
-      else
-        array
-      end
+      #end
     end
 
-    def parse_type_to_ruby(m)
-      case m.name
+    def parse_type_to_ruby(xmlrpc_type)
+      case xmlrpc_type.name
       when "struct"
-        parse_struct m
+        parse_struct(xmlrpc_type)
       when "array"
-        parse_array m
+        parse_array xmlrpc_type
       when "i4"
         #m.text.to_i
-        Integer m.text
+        Integer xmlrpc_type.text
       when "int"
         #m.text.to_i
-        Integer m.text
+        Integer xmlrpc_type.text
       when "boolean"
         #m.text.to_i
-        Integer m.text
+        Integer xmlrpc_type.text
       when "double"
         #m.text.to_f
-        Float m.text
+        Float xmlrpc_type.text
       when "dateTime.iso8601"
-        Time.parse(m.text).utc.iso8601
+        Time.parse(xmlrpc_type.text).utc.iso8601
       when "base64"
-        m.text
+        xmlrpc_type.text
       else
-        m.text
+        xmlrpc_type.text
       end
     end
 
@@ -76,12 +77,12 @@ class TestLinker
     #   the <value> of each corresponds to each Hash value.
     def parse_struct(xmlrpc_struct)
       struct = {}
-      
+
+      temp_key = ""
+      temp_value = ""
+
       xmlrpc_struct.children.each do |member|
         if member.name == "member"
-          temp_key = ""
-          temp_value = ""
-
           member.children.each do |member_child|
             if member_child.name == "name"
               temp_key = member_child.text
@@ -93,11 +94,10 @@ class TestLinker
           end
 
           struct[temp_key] = temp_value
-          
         end
       end
       
-      struct.symbolize_keys!
+      struct
     end
     
     # Turns a Hash key to a symbol, unless it's an Integer.
@@ -115,9 +115,10 @@ class TestLinker
           values = array_child.children
           
           values.each do |value|
-            value.children.each do |value_child|
-              #p parse_type_to_ruby(value_child)
-              array << parse_type_to_ruby(value_child)
+            if value.name == "value"
+              value.children.each do |value_child|
+                array << parse_type_to_ruby(value_child)
+              end
             end
           end
         end
@@ -165,8 +166,6 @@ class TestLinker
     # @param value
     # @return [String] The +value+ embedded in its XMLRPC type, as a String.
     def parse_type_to_xml(value)
-      puts "value: #{value}"
-      
       case value.class
       when Fixnum
         "<i4>#{value}</i4>"
@@ -174,7 +173,6 @@ class TestLinker
         "<string>#{value}</string>"
       else
         "<string>#{value}</string>"
-        #{ :string => value }
       end
     end
   end
