@@ -1,5 +1,6 @@
 require 'rest-client'
 require 'nokogiri'
+require File.expand_path(File.dirname(__FILE__) + "/../core_ext/hash_patch")
 
 class TestLinker
   class NokoClient
@@ -15,12 +16,9 @@ class TestLinker
 
     def call(method_name, arguments={})
       xml = build_xml(method_name, arguments)
-      puts "XML to call: #{xml}" if @do_logging
-      RestClient.log = $stdout if @do_logging
       http_response = RestClient.post(@url, xml, 
           :content_type => CONTENT_TYPE,
           :accept => CONTENT_TYPE)
-      puts "HTTP Response: #{http_response}" if @do_logging
       xml_response = Nokogiri::XML.parse(http_response.body)
       puts xml_response if @do_logging
 
@@ -79,26 +77,27 @@ class TestLinker
     def parse_struct(xmlrpc_struct)
       struct = {}
       
-      xmlrpc_struct.children.each do |struct_child|
-        if struct_child.name == "member"
+      xmlrpc_struct.children.each do |member|
+        if member.name == "member"
           temp_key = ""
           temp_value = ""
-    
-          struct_child.children.each do |member_child|
+
+          member.children.each do |member_child|
             if member_child.name == "name"
-              temp_key = symbolize_key(member_child.text)
+              temp_key = member_child.text
             elsif member_child.name == "value"
               member_child.children.each do |m|
                 temp_value = parse_type_to_ruby(m)
               end
             end
           end
-    
+
           struct[temp_key] = temp_value
+          
         end
       end
       
-      struct
+      struct.symbolize_keys!
     end
     
     # Turns a Hash key to a symbol, unless it's an Integer.
@@ -117,6 +116,7 @@ class TestLinker
           
           values.each do |value|
             value.children.each do |value_child|
+              #p parse_type_to_ruby(value_child)
               array << parse_type_to_ruby(value_child)
             end
           end
