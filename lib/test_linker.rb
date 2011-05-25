@@ -14,6 +14,22 @@ class TestLinker
   include TestLinker::Helpers
 
   class << self
+    XMLRPC_CLIENTS = [:noko_client, :xmlrpc]
+
+    def xmlrpc_client=(new_client)
+      unless XMLRPC_CLIENTS.include? new_client
+        raise Error, "Invalid XMLRPC Client type.  Available types: #{XMLRPC_CLIENTS}"
+      end
+
+      if new_client == :noko_client
+        require File.expand_path(File.dirname(__FILE__) + '/test_linker/noko_client')
+        @xmlrpc_client = :noko_client
+      end
+    end
+
+    def xmlrpc_client
+      @xmlrpc_client ||= :xmlrpc
+    end
 
     # @return [Boolean] Returns if logging is enabled or not.
     def log?
@@ -76,7 +92,13 @@ class TestLinker
     timeout    = options[:timeout] || DEFAULT_TIMEOUT
     @dev_key   = dev_key
     server_url = server_url + api_path
-    @server    = XMLRPC::Client.new_from_uri(server_url, nil, timeout)
+    
+    if TestLinker.xmlrpc_client == :noko_client
+      @server   = TestLinker::NokoClient.new(server_url, timeout)
+    else
+      @server    = XMLRPC::Client.new_from_uri(server_url, nil, timeout)
+    end
+    
     @version   = Versionomy.parse(options[:version] || api_version)
   end
 
