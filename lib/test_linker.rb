@@ -113,9 +113,18 @@ class TestLinker
   def log_xml=(do_logging)
     if do_logging == true
       puts "WARNING: Net::HTTP warns against using this in production, so you probably shouldn't!!"
-      @server.set_debug(TestLinker.logger)
+      if TestLinker.xmlrpc_client == :xmlrpc
+        @server.set_debug(TestLinker.logger)
+      elsif
+        TestLinker.xmlrpc_client == :noko_client
+        @server.do_logging = true
+      end
     elsif do_logging == false
-      @server.set_debug(nil)
+      if TestLinker.xmlrpc_client == :xmlrpc
+        @server.set_debug(nil)
+      elsif TestLinker.xmlrpc_client == :noko_client
+        @server.do_logging = false
+      end
     end
 
     @log_xml = do_logging
