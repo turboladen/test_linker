@@ -5,7 +5,7 @@ class TestLinker
   class NokoClient
     CONTENT_TYPE = "text/xml; charset=utf-8"
 
-    def initialize(url, timeout, do_logging=false)
+    def initialize(url, timeout, do_logging=true)
       @url = url
       @timeout = timeout
       @do_logging = do_logging
@@ -35,7 +35,7 @@ class TestLinker
         array << parse_type_to_ruby(value)
       end
       
-      array
+      array.length == 1 ? array.first : array
     end
 
     def parse_type_to_ruby(m)
