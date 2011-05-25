@@ -87,19 +87,19 @@ class TestLinker
   # @option options [Fixnum] timeout Seconds to timeout after not receiving a
   #   response from the server.
   # @option options [String] version Force a different API version.
-  def initialize(server_url, dev_key, options={})
+  def initialize(server_url, dev_key, options={ })
     api_path   = options[:api_path] || DEFAULT_API_PATH
     timeout    = options[:timeout] || DEFAULT_TIMEOUT
     @dev_key   = dev_key
     server_url = server_url + api_path
-    
+
     if TestLinker.xmlrpc_client == :noko_client
-      @server   = TestLinker::NokoClient.new(server_url, timeout)
+      @server = TestLinker::NokoClient.new(server_url, timeout)
     else
-      @server    = XMLRPC::Client.new_from_uri(server_url, nil, timeout)
+      @server = XMLRPC::Client.new_from_uri(server_url, nil, timeout)
     end
-    
-    @version   = Versionomy.parse(options[:version] || api_version)
+
+    @version = Versionomy.parse(options[:version] || api_version)
   end
 
   # @return [Boolean] Returns if logging of XMLRPC requests/responses is
@@ -115,8 +115,7 @@ class TestLinker
       puts "WARNING: Net::HTTP warns against using this in production, so you probably shouldn't!!"
       if TestLinker.xmlrpc_client == :xmlrpc
         @server.set_debug(TestLinker.logger)
-      elsif
-        TestLinker.xmlrpc_client == :noko_client
+      elsif TestLinker.xmlrpc_client == :noko_client
         @server.do_logging = true
       end
     elsif do_logging == false
@@ -145,13 +144,13 @@ class TestLinker
   # @return The return type depends on the method call.
   def make_call(method_name, arguments, method_supported_in_version)
     ensure_version_is :greater_than_or_equal_to, method_supported_in_version
-    
+
     arguments.merge!({ :devKey => @dev_key }) unless arguments.has_key? :devKey
-    
+
     TestLinker.log "API Version: #{method_supported_in_version}"
     TestLinker.log "Calling method: '#{method_name}' with args '#{arguments.inspect}'"
     response = @server.call(method_name, arguments)
-    
+
     TestLinker.log "response class: #{response.class}"
     if response.is_a?(Array) && response.first.is_a?(Hash)
       response.each { |r| r.symbolize_keys! }
@@ -167,7 +166,7 @@ class TestLinker
     elsif response.is_a?(Array) && response.first.is_a?(Hash) && response.first[:code]
       raise TestLinker::Error, "#{response.first[:code]}: #{response.first[:message]}"
     end
-    
+
     response
   end
 
