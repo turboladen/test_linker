@@ -177,7 +177,7 @@ module TestLinker::Helpers
   # @param [Hash] test_case A testcase Hash (AKA 'testcase info')
   # @return [Boolean] true if the test hasn't yet been executed.
   def test_not_run?(test_case)
-    true if test_case['exec_status'] == 'n'
+    test_case[:exec_status] == 'n'
   end
 
   # Returns all open (not-run) test cases for a given plan within project.
@@ -187,34 +187,38 @@ module TestLinker::Helpers
   # @param [String] project_name
   # @param [Regexp] plan_regex Plan name as regex.
   # @param [Hash] options
+  # @option options [String] build Name of the build to match.
   # @return [Array<Hash>] Array of matching testcase hashes.
-  def find_open_cases_for_plan(project_name, plan_regex, options={ })
+  def find_open_cases_for_plans(project_name, plan_regex, options={})
     test_case_array = []
     project_id = project_id(project_name)
     test_plans = find_test_plans(project_id, plan_regex) # Get plans for project
-    builds = builds_for_test_plan(test_plans[:id]) # Get builds for plan(s)
 
-    builds.each do |build|
-      if options[:build]
-        if build[:name] =~ options[:build]
+    test_plans.each do |test_plan|
+      builds = builds_for_test_plan(test_plan[:id]) # Get builds for plan(s)
+
+      builds.each do |build|
+        if options[:build]
+          if build[:name] =~ options[:build]
+            test_cases = test_cases_for_test_plan(build[:testplan_id],
+                { "buildid" => build[:id] })
+          end
+        elsif build[:is_open] == 1
           test_cases = test_cases_for_test_plan(build[:testplan_id],
               { "buildid" => build[:id] })
         end
-      elsif build[:is_open] == 1
-        test_cases = test_cases_for_test_plan(build[:testplan_id],
-            { "buildid" => build[:id] })
-      end
 
-      unless test_cases.nil?
-        test_cases.each_value do |test_case|
-          # There's only one element here, but it's in an array'
-          test_case_array = test_case_array.concat(test_case) if test_not_run?(test_case.first)
+        unless test_cases.nil?
+          test_cases.each_value do |test_case|
+            test_case_array << test_case if test_not_run?(test_case)
+          end
         end
       end
     end
 
     test_case_array
   end
+  alias_method :find_open_cases_for_plans, :find_open_cases_for_plan
 
   # Get the ID of a suite with the given parent, creating it if it does not
   # exist.
