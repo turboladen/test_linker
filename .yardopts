@@ -2,3 +2,7 @@
 --title "test_linker Documentation"
 --protected
 --private
+-
+ChangeLog.rdoc
+LICENSE.rdoc
+README.rdoc
