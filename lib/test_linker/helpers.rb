@@ -90,7 +90,7 @@ module TestLinker::Helpers
   def find_test_plans(project_id, regex, match_attribute=:name)
     test_plan_list = test_plans(project_id)
     matched_list = []
-    
+
     if @version >= "1.0"
       matched_list = test_plan_list.find_all do |plan|
         plan[match_attribute] =~ regex
@@ -100,10 +100,10 @@ module TestLinker::Helpers
         matched_list << plan if plan[match_attribute] =~ regex
       end
     end
-    
+
     matched_list
   end
-  
+
   # @param [String] project_name
   # @param [String] suite_name
   # @return [Fixnum] ID of the requested test suite.  nil if not found.
@@ -188,17 +188,17 @@ module TestLinker::Helpers
   # @param [Regexp] plan_regex Plan name as regex.
   # @param [Hash] options
   # @return [Array<Hash>] Array of matching testcase hashes.
-  def find_open_cases_for_plan(project_name,plan_regex,options={})
+  def find_open_cases_for_plan(project_name, plan_regex, options={ })
     test_case_array = []
     project_id = project_id(project_name)
     test_plans = find_test_plans(project_id, plan_regex) # Get plans for project
-    builds = builds_for_test_plan(test_plans[:id])       # Get builds for plan(s)
-    
+    builds = builds_for_test_plan(test_plans[:id]) # Get builds for plan(s)
+
     builds.each do |build|
       if options[:build]
         if build[:name] =~ options[:build]
           test_cases = test_cases_for_test_plan(build[:testplan_id],
-              { "buildid" => build[:id] }) 
+              { "buildid" => build[:id] })
         end
       elsif build[:is_open] == 1
         test_cases = test_cases_for_test_plan(build[:testplan_id],
@@ -212,7 +212,7 @@ module TestLinker::Helpers
         end
       end
     end
- 
+
     test_case_array
   end
 
@@ -260,7 +260,7 @@ module TestLinker::Helpers
     test_suite_id = self.suite_info(project_name, plan_name, suite_name)
 
     result = create_test_case(test_project_id, test_suite_id, test_case_name,
-      summary, steps, expected_results, login)
+        summary, steps, expected_results, login)
 
     if result.any?
       result.each do |result_ptr|
@@ -292,7 +292,7 @@ module TestLinker::Helpers
   def add_test_case_to_test_plan_by_name(project_name, plan_name, test_case_id,
       test_case_version)
     test_project_id = project_id(project_name)
-    test_plan_id =  test_plan_id(project_name, plan_name)
+    test_plan_id = test_plan_id(project_name, plan_name)
 
     result = add_test_case_to_test_plan(test_project_id, test_plan_id,
         test_case_id, test_case_version)
