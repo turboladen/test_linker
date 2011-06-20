@@ -91,11 +91,11 @@ module TestLinker::Helpers
     test_plan_list = test_plans(project_id)
     matched_list = []
     
-    if @version > "1.0"
-      test_plan_list.first.values.find_all do |project_test_plan|
-        project_test_plan[match_attribute] =~ regex
+    if @version >= "1.0"
+      matched_list = test_plan_list.find_all do |plan|
+        plan[match_attribute] =~ regex
       end
-    elsif @version <= "1.0"
+    elsif @version < "1.0"
       test_plan_list.first.each_value do |plan|
         matched_list << plan if plan[match_attribute] =~ regex
       end
