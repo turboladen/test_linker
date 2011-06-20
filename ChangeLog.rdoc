@@ -1,3 +1,8 @@
+=== 1.0.1 / 2011-06-19
+* Fixed bugs:
+  * #1: Gemspec showed duplicate dependencies.  Switched to .gemspec and `gem build`
+    for building the gem (no more jeweler).
+
 === 1.0.0 / 2011-05-08
 
 * Added support for new (old) Rubies:
