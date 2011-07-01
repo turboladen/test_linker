@@ -32,7 +32,7 @@ module TestLinker::Helpers
   #
   # @param [String] project_name Name of the project to search for.
   # @param [String] plan_name Name of the plan to search for.
-  # @return [Fixnum] ID of plan matching project_name and plan_name. 0 if the
+  # @return [Fixnum] ID of plan matching project_name and plan_name. nil if the
   #   test plan wasn't found.
   def test_plan_id(project_name, plan_name)
     if @version < "1.0"
@@ -54,7 +54,7 @@ module TestLinker::Helpers
   # @param [String] project_name Name of the project to search for.
   # @param [String] plan_name Name of the plan to search for.
   # @param [String] build_name Name of the build to search for.
-  # @return [Fixnum] ID of plan matching project_name and plan_name
+  # @return [Fixnum] ID of plan matching project_name and plan_name.
   def build_id(project_name, plan_name, build_name)
     plan_id = test_plan_id(project_name, plan_name)
     builds = builds_for_test_plan plan_id
@@ -185,6 +185,47 @@ module TestLinker::Helpers
   # than all open builds by default.
   #
   # @param [String] project_name
+  # @param [String] plan_name
+  # @param [Hash] options
+  # @option options [String] build Name of the build to match.
+  # @return [Array<Hash>] Array of matching testcase hashes.
+  # @see #find_open_cases_for_plans
+  def find_open_cases_for_plan(project_name, plan_name, options={})
+    test_case_array = []
+    plan_id = test_plan_id(project_name, plan_name)
+
+    if plan_id.nil?
+      return []
+    else
+      builds = builds_for_test_plan(plan_id)
+    end
+
+    builds.each do |build|
+      if options[:build]
+        if build[:name] =~ options[:build]
+          test_cases = test_cases_for_test_plan(build[:testplan_id],
+              { "buildid" => build[:id] })
+        end
+      elsif build[:is_open] == 1
+        test_cases = test_cases_for_test_plan(build[:testplan_id],
+            { "buildid" => build[:id] })
+      end
+
+      unless test_cases.nil?
+        test_cases.each_value do |test_case|
+          test_case_array << test_case if test_not_run?(test_case)
+        end
+      end
+    end
+
+    test_case_array
+  end
+
+  # Returns all open (not-run) test cases for a given plan within project.
+  # Extra options for now are +:build+, which will match a given build rather
+  # than all open builds by default.
+  #
+  # @param [String] project_name
   # @param [Regexp] plan_regex Plan name as regex.
   # @param [Hash] options
   # @option options [String] build Name of the build to match.
@@ -219,7 +260,6 @@ module TestLinker::Helpers
     test_case_array
   end
   alias_method :find_open_cases_for_plans, :find_open_cases_for_plan
-
   # Get the ID of a suite with the given parent, creating it if it does not
   # exist.
   #
