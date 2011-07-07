@@ -44,7 +44,7 @@ describe TestLinker do
 </methodResponse>
 
     XML
-    register_body(body)
+    register_body("http://testlink19", body)
     expect { TestLinker.new "http://testing", "devkey" }.to
       raise_error(TestLinker::Error,
       "2000: Can not authenticate client: invalid developer key")

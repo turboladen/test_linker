@@ -221,9 +221,9 @@ module TestLinker::Helpers
     test_case_array
   end
 
-  # Returns all open (not-run) test cases for a given plan within project.
-  # Extra options for now are +:build+, which will match a given build rather
-  # than all open builds by default.
+  # Returns all open (not-run) test cases for a set of test plans within project
+  # that match the given Regexp. Extra options for now are +:build+, which will 
+  # match a given build rather than all open builds by default.
   #
   # @param [String] project_name
   # @param [Regexp] plan_regex Plan name as regex.
@@ -231,9 +231,12 @@ module TestLinker::Helpers
   # @option options [String] build Name of the build to match.
   # @return [Array<Hash>] Array of matching testcase hashes.
   def find_open_cases_for_plans(project_name, plan_regex, options={})
+    puts 'meow'
     test_case_array = []
     project_id = project_id(project_name)
-    test_plans = find_test_plans(project_id, plan_regex) # Get plans for project
+    puts "project ID: #{project_id}"
+    test_plans = find_test_plans(project_id, plan_regex)
+    puts "test plans: #{test_plans}"
 
     test_plans.each do |test_plan|
       builds = builds_for_test_plan(test_plan[:id]) # Get builds for plan(s)

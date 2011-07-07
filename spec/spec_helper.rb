@@ -21,7 +21,10 @@ require 'rspec'
 require 'fakeweb'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/test_linker')
 
-def register_body(body)
-  FakeWeb.register_uri(:post, 'http://testing/lib/api/xmlrpc.php',
+FakeWeb.allow_net_connect = false
+
+def register_body(url_base, body)
+  #FakeWeb.register_uri(:post, 'http://testing/lib/api/xmlrpc.php',
+  FakeWeb.register_uri(:post, "#{url_base}/lib/api/xmlrpc.php",
       :content_type => 'text/xml', :body => body )
 end
