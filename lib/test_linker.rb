@@ -1,6 +1,7 @@
 require 'logger'
 require 'rubygems'
 require 'versionomy'
+require 'log_switch'
 
 require File.expand_path(File.dirname(__FILE__) + '/core_ext/hash_patch')
 require File.expand_path(File.dirname(__FILE__) + '/test_linker/wrapper')
@@ -10,51 +11,12 @@ require File.expand_path(File.dirname(__FILE__) + '/test_linker/helpers')
 require File.expand_path(File.dirname(__FILE__) + '/core_ext/xmlrpc_client_patch')
 
 class TestLinker
+  extend LogSwitch
   include TestLinker::Wrapper
   include TestLinker::Helpers
 
-  class << self
-
-    # @return [Boolean] Returns if logging is enabled or not.
-    def log?
-      @log ||= false
-    end
-
-    # @param [Boolean] do_logging false to turn logging off; true to turn it
-    #   back on.
-    def log=(do_logging)
-      @log = do_logging
-    end
-
-    # @return [Logger,?] Returns a Logger unless you use a different type of
-    #   logging object.
-    def logger
-      @logger ||= Logger.new STDOUT
-    end
-
-    # @param [?] logging_object Call this to use a different type of logger
-    #   than Logger.
-    def logger=(logging_object)
-      @logger = logging_object
-    end
-
-    # @return [Symbol] The method name to send to the logging object in order to
-    #   log messages.
-    def log_level
-      @log_level ||= :debug
-    end
-
-    # @param [Symbol] The method name to send to the logging object in order to
-    #   log messages.
-    def log_level=(level)
-      @log_level = level
-    end
-
-    # @param [String] message The string to log.
-    def log message
-      logger.send(log_level, message) if log?
-    end
-  end
+  # Turn logging off by default.
+  self.log = false
 
   # Default value for timing out after not receiving an XMLRPC response from
   # the server.

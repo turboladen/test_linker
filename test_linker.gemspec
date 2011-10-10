@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.summary = %q{An interface to the TestLink XMLRPC API}
 
   s.add_runtime_dependency(%q<versionomy>, ["~> 0.4.0"])
+  s.add_runtime_dependency(%q<log_switch>, ["~> 0.1.4"])
 
   s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
   s.add_development_dependency(%q<cucumber>, ["~> 0.10.0"])
@@ -38,4 +39,3 @@ Gem::Specification.new do |s|
     s.add_development_dependency(%q<simplecov>, [">= 0.4.0"])
   end
 end
-
