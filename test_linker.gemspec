@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version = TestLinker::VERSION
 
   s.required_rubygems_version = ">=1.6.2"
-  s.authors = ["turboladen"]
+  s.author = "Steve Loveless"
   s.date = %q{2011-06-19}
   s.description = %q{This is a Ruby wrapper around the TestLink XMLRPC API, thus allowing access to
   your TestLink test projects, plans, cases, and results using Ruby.  We've added
@@ -19,9 +19,8 @@ Gem::Specification.new do |s|
     "LICENSE.rdoc",
     "README.rdoc"
   ]
-  s.files = Dir.glob("{spec,features,lib}/**/*") +
-      %w(.document .gemtest .yardopts ChangeLog.rdoc Gemfile LICENSE.rdoc README.rdoc
-        Rakefile)
+  s.files = Dir.glob("{spec,features,lib}/**/*") + Dir.glob("*.rdoc") +
+      %w(.document .gemtest .yardopts Gemfile Rakefile)
   s.homepage = %q{http://github.com/turboladen/test_linker}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]

@@ -9,6 +9,7 @@
     is really the same fix as for #3.  (thanks fishstick!)
   * #9: Added .rdoc files to .yardopts in hopes that rdoc.info will use that to
     add the ChangeLog and LICENSE files to the Files list.
+  * Fixed author in gemspec.
 
 === 1.0.0 / 2011-05-08
 
