@@ -10,6 +10,8 @@
   * #9: Added .rdoc files to .yardopts in hopes that rdoc.info will use that to
     add the ChangeLog and LICENSE files to the Files list.
   * Fixed author in gemspec.
+* Improvements:
+  * Started using log_switch for class logging.
 
 === 1.0.0 / 2011-05-08
 
