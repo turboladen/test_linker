@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   ]
   s.files = Dir.glob("{spec,features,lib}/**/*") + Dir.glob("*.rdoc") +
       %w(.document .gemtest .yardopts Gemfile Rakefile)
-  s.homepage = %q{http://github.com/mipmip/test_linker}
+  s.homepage = %q{http://github.com/turboladen/test_linker}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
