@@ -1,7 +1,5 @@
 = test_linker
 
-This fork fixes test_linker to make it work with at least TestLink v1.9.13. <mipmip>
-
 * {Homepage}[http://rubygems.org/gems/test_linker]
 * {Documentation}[http://rubydoc.info/gems/test_linker/frames]
 * {TestLink API Documentation}[http://testlink.org/api/phpdoc_generated/TestlinkAPI/TestlinkXMLRPCServer.html]
