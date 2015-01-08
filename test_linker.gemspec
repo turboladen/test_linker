@@ -1,5 +1,5 @@
 $:.push File.expand_path("../lib", __FILE__)
-require 'test_linker'
+require 'test_linker/version'
 
 Gem::Specification.new do |s|
   s.name = %q{test_linker}
@@ -21,13 +21,13 @@ Gem::Specification.new do |s|
   ]
   s.files = Dir.glob("{spec,features,lib}/**/*") + Dir.glob("*.rdoc") +
       %w(.document .gemtest .yardopts Gemfile Rakefile)
-  s.homepage = %q{http://github.com/turboladen/test_linker}
+  s.homepage = %q{http://github.com/mipmip/test_linker}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{An interface to the TestLink XMLRPC API}
 
-  s.add_runtime_dependency(%q<versionomy>, ["~> 0.4.0"])
+  s.add_runtime_dependency('versionomy', ["~> 0.4.0"])
   s.add_runtime_dependency(%q<log_switch>, ["~> 0.1.4"])
 
   s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])

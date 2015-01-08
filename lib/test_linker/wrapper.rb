@@ -330,6 +330,7 @@ class TestLinker
 
     # @param [Fixnum,String] project_id
     # @param [Fixnum,String] test_case_external_id
+    # @param [Fixnum,String] version
     # @param [Fixnum] custom_field_name
     # @param [Hash] options
     # @option options [String] details Changes output information. If null or 'value',
@@ -337,10 +338,11 @@ class TestLinker
     #   plus value and internal test case id; if 'simple', returns value plus custom
     #   field name, label, and type (as code).
     # @return [Array<Hash>]
-    def test_case_custom_field_design_value(project_id, test_case_external_id,
+    def test_case_custom_field_design_value(project_id, test_case_external_id, version,
         custom_field_name, options={})
       args = { :testprojectid => project_id,
           :testcaseexternalid => test_case_external_id,
+          :version => version,
           :customfieldname => custom_field_name }
       args.merge! options
       make_call("tl.getTestCaseCustomFieldDesignValue", args, "1.0b5")
