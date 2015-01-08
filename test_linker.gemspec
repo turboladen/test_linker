@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{An interface to the TestLink XMLRPC API}
 
-  s.add_runtime_dependency('versionomy', ["~> 0.4.0"])
+  s.add_runtime_dependency(%q<versionomy>, ["~> 0.4.0"])
   s.add_runtime_dependency(%q<log_switch>, ["~> 0.1.4"])
 
   s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
