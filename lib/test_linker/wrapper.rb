@@ -276,22 +276,11 @@ class TestLinker
     #   giving success or failure info.
     # @raise [TestLinker::Error] If result fails to be posted for any reason.
     def report_test_case_result(plan_id, test_case_id, status, options={})
-      if @version >= "1.0"
-        message = "Method not supported in version #{@version}. "
-        message << "Use #test_case_execution_result="
-        raise TestLinker::Error, message
-      end
 
       args = { :testcaseid => test_case_id, :testplanid => plan_id,
           :status => status, :guess => true }
       args.merge! options
-      result = @server.call("tl.reportTCResult", args).first
-
-      unless result['message'] == 'Success!'
-        raise TestLinker::Error, "#{result['code']}: #{result['message']}"
-      end
-
-      result
+      make_call("tl.reportTCResult", args, "1.0b5")
     end
     alias_method :reportTCResult, :report_test_case_result
 
@@ -330,6 +319,7 @@ class TestLinker
 
     # @param [Fixnum,String] project_id
     # @param [Fixnum,String] test_case_external_id
+    # @param [Fixnum,String] version
     # @param [Fixnum] custom_field_name
     # @param [Hash] options
     # @option options [String] details Changes output information. If null or 'value',
@@ -337,10 +327,11 @@ class TestLinker
     #   plus value and internal test case id; if 'simple', returns value plus custom
     #   field name, label, and type (as code).
     # @return [Array<Hash>]
-    def test_case_custom_field_design_value(project_id, test_case_external_id,
+    def test_case_custom_field_design_value(project_id, test_case_external_id, version,
         custom_field_name, options={})
       args = { :testprojectid => project_id,
           :testcaseexternalid => test_case_external_id,
+          :version => version,
           :customfieldname => custom_field_name }
       args.merge! options
       make_call("tl.getTestCaseCustomFieldDesignValue", args, "1.0b5")

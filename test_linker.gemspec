@@ -1,5 +1,5 @@
 $:.push File.expand_path("../lib", __FILE__)
-require 'test_linker'
+require 'test_linker/version'
 
 Gem::Specification.new do |s|
   s.name = %q{test_linker}

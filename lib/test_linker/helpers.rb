@@ -25,7 +25,7 @@ module TestLinker::Helpers
       project = project_by_name(project_name).first
     end
 
-    project.nil? ? nil : project[:id].to_i
+    project.nil? ? nil : project[1].to_i
   end
 
   # Gets info about test plans within a project
@@ -92,8 +92,8 @@ module TestLinker::Helpers
     matched_list = []
 
     if @version >= "1.0"
-      matched_list = test_plan_list.find_all do |plan|
-        plan[match_attribute] =~ regex
+      test_plan_list.each do |plan|
+        matched_list << plan
       end
     elsif @version < "1.0"
       test_plan_list.first.each_value do |plan|

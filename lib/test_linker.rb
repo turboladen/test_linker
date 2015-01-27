@@ -23,7 +23,7 @@ class TestLinker
   DEFAULT_TIMEOUT = 30
 
   # Path the the XMLRPC interface (via the xmlrpc.php file) on the server.
-  DEFAULT_API_PATH = "/lib/api/xmlrpc.php"
+  DEFAULT_API_PATH = "/lib/api/xmlrpc/v1/xmlrpc.php"
 
   # @param [String] server_url URL to access TestLink API
   # @param [String] dev_key User key to access TestLink API
@@ -76,13 +76,13 @@ class TestLinker
   # @return The return type depends on the method call.
   def make_call(method_name, arguments, method_supported_in_version)
     ensure_version_is :greater_than_or_equal_to, method_supported_in_version
-    
+
     arguments.merge!({ :devKey => @dev_key }) unless arguments.has_key? :devKey
-    
+
     TestLinker.log "API Version: #{method_supported_in_version}"
     TestLinker.log "Calling method: '#{method_name}' with args '#{arguments.inspect}'"
     response = @server.call(method_name, arguments)
-    
+
     TestLinker.log "response class: #{response.class}"
     if response.is_a?(Array) && response.first.is_a?(Hash)
       response.each { |r| r.symbolize_keys! }
@@ -91,14 +91,14 @@ class TestLinker
     end
 
     TestLinker.log "Received response:"
-    TestLinker.log response
+    TestLinker.log response.to_s
 
     if @version.nil?
       return response
     elsif response.is_a?(Array) && response.first[:code]
       raise TestLinker::Error, "#{response.first[:code]}: #{response.first[:message]}"
     end
-    
+
     response
   end
 
